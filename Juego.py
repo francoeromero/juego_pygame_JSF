@@ -1,5 +1,4 @@
 import pygame
-import random
 from constantes import *
 from preguntas import *
 from funciones import *
@@ -42,17 +41,6 @@ comodines = {"bomba": 1, "x2": 1, "doble_chance": 1, "pasar": 1}
 comodin_usado = {"bomba": False, "x2": False, "doble_chance": False, "pasar": False}  # Estado de los comodines
 
 
-def eliminar_respuesta_incorrecta(pregunta_actual, cartas_respuestas):
-    # Encontrar las respuestas incorrectas
-    respuestas_incorrectas = [i for i in range(4) if i + 1 != pregunta_actual['respuesta_correcta']]
-    
-    # Seleccionar una respuesta incorrecta al azar
-    respuesta_a_eliminar = random.choice(respuestas_incorrectas)
-
-    # PONGO UNA BARRA PARA "ELIMINAR" UNA RESPUESTA INCORRECTA
-    cartas_respuestas[respuesta_a_eliminar]['superficie'].fill((169, 169, 169))  # Gris
-    pregunta_actual[f'respuesta_{respuesta_a_eliminar + 1}'] = "Eliminada"
-
 def activar_comodin(comodines, comodin_usado, tipo_comodin, clave_comodin, pregunta_actual):
     if comodines[clave_comodin] > 0 and not comodin_usado[clave_comodin]:
         comodines[clave_comodin] -= 1
@@ -62,9 +50,13 @@ def activar_comodin(comodines, comodin_usado, tipo_comodin, clave_comodin, pregu
         # Si es el comodín bomba, eliminamos una respuesta incorrecta
         if clave_comodin == "bomba":
             eliminar_respuesta_incorrecta(pregunta_actual, cartas_respuestas)
-        return True
+
+        elif clave_comodin == "pasar":
+            return True    
     return False
 
+doble_chance_activo = False 
+respuesta_incorrecta_seleccionada = None  # Almacena la opción seleccionada si erra
 
 # CARGAR IMAGENES DE LAS RESPUESTAS Y POSICIONAR
 cartas_respuestas = cargar_botones_y_posicionar(imagenes_respuestas, posiciones_botones)
@@ -76,6 +68,8 @@ def mostrar_juego(pantalla:pygame.Surface, cola_eventos:list[pygame.event.Event]
     global indice
     global bandera_respuesta
     global cartas_respuestas
+    global doble_chance_activo
+    global respuesta_incorrecta_seleccionada
     
     pygame.display.set_caption('JUEGO')
     if bandera_respuesta == True:
@@ -109,11 +103,13 @@ def mostrar_juego(pantalla:pygame.Surface, cola_eventos:list[pygame.event.Event]
             elif evento.key == pygame.K_d:  # Comodín doble chance
                 if activar_comodin(comodines, comodin_usado, "DOBLE CHANCE", "doble_chance", pregunta_actual):
                     # LOGICA DEL DOBLE CHANCE
-                    pass
+                    doble_chance_activo = True
+                    respuesta_incorrecta_seleccionada = None
+
             elif evento.key == pygame.K_p:  # Comodín pasar
                 if activar_comodin(comodines, comodin_usado, "PASAR", "pasar", pregunta_actual):
                     # LOGICA DEL PASAR
-                    pregunta_actual, cartas_respuestas = mostrar_texto()
+                    indice += 1
                     bandera_respuesta = True
                     continue
 
@@ -122,12 +118,22 @@ def mostrar_juego(pantalla:pygame.Surface, cola_eventos:list[pygame.event.Event]
                 if cartas_respuestas[i]['rectangulo'].collidepoint(evento.pos):
                     CLICK_PELOTAZO.play()
                     cartas_respuestas[i]['superficie'] = pygame.image.load(imagenes_respuestas_seleccionadas[i])
+
                     if i + 1 == pregunta_actual['respuesta_correcta']:
                         marcar_respuesta_correcta(datos_juego)
                         datos_juego['nivel_actual'] = 2
+                        doble_chance_activo = False  # Desactivamos el comodín después de una respuesta correcta
+                        respuesta_incorrecta_seleccionada = None
                     else:
-                        marcar_respuesta_incorrecta(datos_juego)
-                    indice += 1
+                        if doble_chance_activo and respuesta_incorrecta_seleccionada is None:
+                            respuesta_incorrecta_seleccionada = i  # Guardamos la respuesta incorrecta
+                            cartas_respuestas[i]['superficie'].fill((100, 100, 100))  # deshabilito la opcion incorrecta
+                            print("Primera respuesta incorrecta, esperando segunda oportunidad...")
+                        else:
+                            marcar_respuesta_incorrecta(datos_juego)
+                            doble_chance_activo = False  # Terminamos la oportunidad de doble chance
+                            respuesta_incorrecta_seleccionada = None
+                        indice += 1
                     bandera_respuesta = True
                     if indice == len(lista_preguntas):
                         indice = 0

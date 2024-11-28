@@ -44,7 +44,9 @@ def reiniciar_datos_juego(datos_juego: dict)-> None:
     datos_juego['puntuacion'] = 0
     datos_juego['vidas'] = 3
     datos_juego['acumulador_correctas'] = 0
-    datos_juego['nivel_juego'] = 1
+    datos_juego['nivel_actual'] = 1
+    datos_juego['fecha'] = FECHA_ACTUAL
+    print(datos_juego)
 
 def actualizar_fotograma(pantalla, fotogramas, velocidad_fondo):
     global indice_fotograma, temporizador
@@ -87,7 +89,7 @@ def cargar_botones_y_posicionar(imagenes:list,posiciones:list):
     return retorno
 
 def dibujar_corazones_vidas(cantidad_vidas: int,pantalla):
-    posiciones_corazones = [(380, 633), (440, 633), (500, 633)]
+    posiciones_corazones = [(180, 620), (240, 620), (300, 620)]
     ruta_imagen_celeste = 'img/corazon_celeste.png'
     ruta_imagen_gris = 'img/corazon_gris.png'
     dimensiones_corazon = (50,50)
@@ -113,8 +115,8 @@ def marcar_respuesta_incorrecta(datos_juego: dict):
 archivo_json = "puntuaciones.json"
 
 # Función para guardar datos en JSON
-def guardar_datos_en_json(nombre, puntuacion):
-    datos = {"nombre": nombre, "puntuacion": puntuacion}
+def guardar_datos_en_json(fecha,nombre, puntuacion):
+    datos = {"fecha": fecha, "nombre": nombre, "puntuacion": puntuacion}
     try:
         with open("puntajes.json", "r") as archivo:
             puntajes = json.load(archivo)

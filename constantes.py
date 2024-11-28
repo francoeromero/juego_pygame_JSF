@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
-
-
+from datetime import datetime
+FECHA_ACTUAL = datetime.now().strftime("%d-%m-%Y")
 TAMANYO_BOTON = (250,250)
 CUADRO_TEXTO = (250,250)
 TAMANYO_BOTON_VOLUMEN = (60,60)

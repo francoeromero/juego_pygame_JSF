@@ -91,26 +91,14 @@ def mostrar_menu(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event])-
     # CARGAR FONDO PANTALLA
     cargar_y_mostrar_imagen(pantalla,'img/fondo_menu_ppal.png',VENTANA,(0,0))
 
-
-
-    # cargar_y_mostrar_imagen(pantalla,'img/fondo_menu_ppal.png',VENTANA,(0,0))
-    # fondo_menu = pygame.image.load('img/fondo_menu_ppal.png')
-    # fondo_menu = pygame.transform.scale(fondo_menu,(VENTANA))
-    # pantalla.blit(fondo_menu,(0,0))
-    # CARGAR PORTATIL
-    # cargar_y_mostrar_imagen(pantalla, 'img/portatil.png', VENTANA, (0, 0))
-    # portatil = pygame.image.load('img/portatil.png')
-    # portatil = pygame.transform.scale(portatil,(VENTANA))
-    # pantalla.blit(portatil,(0,0))
-    
-
     # UBICAR LOS BOTONES Y SELECCIONARLOS
     
     claves_botones = [BOTON_JUGAR, BOTON_CONFIG, BOTON_RANKINGS, BOTON_SALIR]
     for i in range(len(posiciones_botones)):
         lista_botones[claves_botones[i]]['rectangulo'] = pantalla.blit(lista_botones[claves_botones[i]]['superficie'], posiciones_botones[i])
     # CARGAR PORTATIL
-    cargar_y_mostrar_imagen(pantalla, 'img/portatil.png', VENTANA, (0, 0))
-
+    cargar_y_mostrar_imagen(pantalla, 'img/portatil_game.png', VENTANA, (0, 0))
+    # CARGAR MESSI
+    cargar_y_mostrar_imagen(pantalla,'img/messi_concentrado.png',(73,124),(570,580))
 
     return retorno

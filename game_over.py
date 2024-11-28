@@ -3,11 +3,12 @@ from constantes import *
 from funciones import *
 import json
 
-boton_salir = crear_diccionario_boton('img/boton_salir_game_over.png',(150, 550))
-boton_salir_seleccionado = crear_diccionario_boton('img/boton_salir_game_over_seleccionado.png',(150, 550))
-boton_cargar = crear_diccionario_boton('img/boton_cargar.png',(900, 550))
-boton_cargar_seleccionado = crear_diccionario_boton('img/boton_cargar_seleccionado.png',(900, 550))
+boton_salir = crear_diccionario_boton('img/boton_salir_game_over.png',(150, 500))
+boton_salir_seleccionado = crear_diccionario_boton('img/boton_salir_game_over_seleccionado.png',(150, 500))
+boton_cargar = crear_diccionario_boton('img/boton_cargar.png',(900, 500))
+boton_cargar_seleccionado = crear_diccionario_boton('img/boton_cargar_seleccionado.png',(900, 500))
 nombre = ''
+
 
 def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event], datos_juego:dict)->str:
     global nombre
@@ -30,15 +31,17 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
                 retorno = 'menu'
             if boton_cargar['rectangulo'].collidepoint(evento.pos):
                 CLICK_SONIDO.play()
-                guardar_datos_en_json(nombre, datos_juego['puntuacion'])
-                reiniciar_datos_juego(datos_juego)
-                    
-                retorno = 'menu'
+                if nombre.isalpha():
+                    guardar_datos_en_json(FECHA_ACTUAL,nombre, datos_juego['puntuacion'])
+                    reiniciar_datos_juego(datos_juego)
+                    retorno = 'menu'
+                else:
+                    mensaje_error = "El nombre solo debe contener letras."
         #---------
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_RETURN:  # Guarda al presionar enter
                 if nombre.isalpha():
-                    guardar_datos_en_json(nombre, datos_juego['puntuacion'])
+                    guardar_datos_en_json(FECHA_ACTUAL,nombre, datos_juego['puntuacion'])
                     reiniciar_datos_juego(datos_juego)
                     
                     retorno = 'menu'
@@ -54,11 +57,11 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
     # CARGAR FONDO PANTALLA
     cargar_y_mostrar_imagen(pantalla,'img/fondo_puntuacion.png',VENTANA,(0,0))
     # CARGAR BOTON SALIR
-    cargar_y_mostrar_imagen(pantalla, 'img/boton_salir_game_over.png', (163,61), (150, 550))
+    cargar_y_mostrar_imagen(pantalla, 'img/boton_salir_game_over.png', (163,61), (150, 500))
     # CARGAR BOTON CARGAR
-    cargar_y_mostrar_imagen(pantalla, 'img/boton_cargar.png', (163,61), (900, 550))
+    cargar_y_mostrar_imagen(pantalla, 'img/boton_cargar.png', (163,61), (900, 500))
     # CARGAR PORTATIL
-    cargar_y_mostrar_imagen(pantalla, 'img/portatil.png', VENTANA, (0, 0))
+    cargar_y_mostrar_imagen(pantalla, 'img/portatil_game.png', VENTANA, (0, 0))
     
     #Puntaje
     puntaje_texto = fuente_game_over_puntuacion.render(f"{datos_juego['puntuacion']}", True, (COLOR_NEGRO))

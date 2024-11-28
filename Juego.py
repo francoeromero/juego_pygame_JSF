@@ -9,7 +9,9 @@ pygame.init()
 # FUENTES DEL JUEGO
 fuente_pregunta = pygame.font.SysFont('impact', 30) 
 fuente_respuesta = pygame.font.SysFont('arial', 25) 
-fuente_portatil = pygame.font.Font('fuentes/Minecraft.ttf', 30)
+fuente_portatil = pygame.font.Font('fuentes/Minecraft.ttf', 28)
+fuente_cronometro = pygame.font.Font('fuentes/Minecraft.ttf', 38)
+
 
 indice = 1
 
@@ -38,10 +40,11 @@ claves_botones = [OPCION_1, OPCION_2, OPCION_3, OPCION_4]
 
 bandera_respuesta = False
 contador_respuestas_correctas = 0
-cronometro = 9
+cronometro = 15
 ultimo_tiempo = pygame.time.get_ticks()
 contador_correctas_constantes = 0 # -----------------------
-
+mostrar_messi_feliz = 0
+mostrar_messi_enojado = 0
 def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event], datos_juego:dict)->str:
     global indice
     global lista_preguntas
@@ -51,11 +54,13 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     global cronometro
     global ultimo_tiempo
     global contador_correctas_constantes # -----------------------
+    global mostrar_messi_feliz
+    global mostrar_messi_enojado
 
     pygame.display.set_caption('JUEGO')
     if bandera_respuesta == True:
         cartas_respuestas = cargar_botones_y_posicionar(imagenes_respuestas,posiciones_botones)
-        cronometro = 9 
+        cronometro = 15 
         bandera_respuesta = False
     retorno = 'jugar'
 
@@ -67,11 +72,16 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     # SI LLEGA A 0, INCORRECTA
     if cronometro <= 0:
         marcar_respuesta_incorrecta(datos_juego)
+        mostrar_messi_enojado = 30
         indice += 1
         contador_correctas_constantes = 0 # -----------------------
         bandera_respuesta = True
         if indice == len(lista_preguntas):
             indice = 0
+        
+        if indice >= len(lista_preguntas):
+            reiniciar_datos_juego(datos_juego)
+            retorno = 'game_over'
 
     # CREAR LA PREGUNTA
     carta_pregunta = {}
@@ -94,35 +104,42 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
                     respuesta_actual = i + 1
                     if respuesta_actual == pregunta_actual['respuesta_correcta']:
                         marcar_respuesta_correcta(datos_juego)
+                        mostrar_messi_feliz = 30
+                        
                         # CONTAR CORRECTAS
                         contador_respuestas_correctas += 1
-                        contador_correctas_constantes += 1# -----------------------
+                        contador_correctas_constantes += 1
 
-                        if contador_correctas_constantes == 5: # -----------------------
-                                datos_juego['vidas'] += 1
-                                contador_correctas_constantes = 0
+                        if contador_correctas_constantes == 5: 
                                 CLICK_GANASTE_VIDA.play()
+                                if datos_juego['vidas'] < 3:
+                                    datos_juego['vidas'] += 1
+                                    # contador_correctas_constantes = 0
 
                         if contador_respuestas_correctas >= CANTIDAD_PREGUNTAS_POR_NIVEL:
                             contador_respuestas_correctas = 0
                             if datos_juego['nivel_actual'] <= CANTIDAD_NIVELES:
                                 datos_juego['nivel_actual'] += 1
                             else:
+                                datos_juego['nivel_actual'] = 1
                                 retorno = 'game_over'
 
                     else:
                         marcar_respuesta_incorrecta(datos_juego)
-                        contador_correctas_constantes = 0 # -----------------------
+                        mostrar_messi_enojado = 30
+                        contador_correctas_constantes = 0 
                     indice += 1
                     bandera_respuesta = True
                     if indice == len(lista_preguntas):
                         indice = 0
+                        datos_juego['nivel_actual'] = 1
+                        retorno = 'game_over'
     
     # CARGAR FUTBOLISTA SEGUN EL NIVEL ACTUAL
     cargar_y_mostrar_imagen(pantalla, f'img/fondo_juego_{datos_juego['nivel_actual']}.png', VENTANA, (0, 0))
 
     # CONFIGURAR PREGUNTA
-    carta_pregunta['superficie'] = pygame.Surface((615,200), pygame.SRCALPHA) 
+    carta_pregunta['superficie'] = pygame.Surface((400,200), pygame.SRCALPHA) 
     carta_pregunta['superficie'].fill(TRANSPARENTE)
 
     # AGREGAR TEXTO ALA PREGUNTA
@@ -135,22 +152,34 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     
     
     # DIBUJAR y UBICAR PREGUNTA
-    pantalla.blit(carta_pregunta['superficie'], (500, 150))
+    pantalla.blit(carta_pregunta['superficie'], (680, 150))
 
     # CARGAR PORTATIL
-    cargar_y_mostrar_imagen(pantalla, 'img/portatil.png', VENTANA, (0, 0))
+    cargar_y_mostrar_imagen(pantalla, 'img/portatil_game.png', VENTANA, (0, 0))
     # VIDAS
     dibujar_corazones_vidas(datos_juego['vidas'],pantalla)
     # PUNTUACION
-    mostrar_texto(pantalla,f'{datos_juego["puntuacion"]}',(830,643),fuente_portatil,COLOR_BLANCO)
+    mostrar_texto(pantalla,f'Puntuacion:{datos_juego["puntuacion"]}',(835,630),fuente_portatil,COLOR_BLANCO)
     # CRONOMETRO
-    mostrar_texto(pantalla,f"00:0{cronometro}",(580, 95), fuente_portatil,  COLOR_BLANCO) 
-
+    mostrar_texto(pantalla,f"{cronometro}",(600, 64), fuente_cronometro,  COLOR_BLANCO) 
+    # CARGAR MESSI
+    if mostrar_messi_feliz > 0:
+        cargar_y_mostrar_imagen(pantalla,'img/messi_feliz.png',(73,124),(570,580))
+        # SE VA REDUCIENDO CADA IMPRESION HASTA CERO
+        mostrar_messi_feliz -=1
+    elif mostrar_messi_enojado> 0:
+        cargar_y_mostrar_imagen(pantalla,'img/messi_enojado.png',(73,124),(570,580))
+        # SE VA REDUCIENDO CADA IMPRESION HASTA CERO
+        mostrar_messi_enojado-=1
+    else:
+        cargar_y_mostrar_imagen(pantalla,'img/messi_concentrado.png',(73,124),(570,580))
+    
     # DIBUJAR LAS RESPUESTAS
     for i in range(len(cartas_respuestas)):
         pantalla.blit(cartas_respuestas[i]['superficie'],cartas_respuestas[i]['rectangulo'])
     
     if datos_juego['vidas'] <= 0:
+        cargar_y_mostrar_imagen(pantalla,'img/messi_concentrado.png',(73,124),(570,580))
         retorno = 'game_over'
         CLICK_GAME_OVER.play()
         indice = 0

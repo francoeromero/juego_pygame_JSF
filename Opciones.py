@@ -8,7 +8,7 @@ pygame.init()
 # Configuración inicial del botón "volver"
 boton_volver = {
     'superficie': pygame.image.load('img/boton_volver.png'),
-    'rectangulo': pygame.Rect(150, 550, 163, 61)
+    'rectangulo': pygame.Rect(150, 500, 163, 61)
 }
 
 # Configuración inicial de la barra y la pelota
@@ -55,7 +55,7 @@ def mostrar_opciones(pantalla: pygame.Surface, cola_eventos: list[pygame.event.E
 
     # Dibujar elementos en pantalla
     cargar_y_mostrar_imagen(pantalla, 'img/fondo_opciones.png', VENTANA, (0, 0))  # Fondo del menú
-    cargar_y_mostrar_imagen(pantalla, 'img/boton_volver.png', (163, 61), (150, 550))  # Botón volver
+    cargar_y_mostrar_imagen(pantalla, 'img/boton_volver.png', (163, 61), (150, 500))  # Botón volver
 
     pantalla.blit(pelota_volumen, (pelota_pos_x, pelota_pos_y))  # Dibujar la pelota sobre la barra
 
@@ -63,6 +63,11 @@ def mostrar_opciones(pantalla: pygame.Surface, cola_eventos: list[pygame.event.E
     boton_volver['rectangulo'] = pantalla.blit(boton_volver['superficie'], boton_volver['rectangulo'].topleft)
     # Reiniciar botón volver seleccionado
     boton_volver['superficie'] = pygame.image.load('img/boton_volver.png')
-    boton_volver['rectangulo'] = pygame.Rect(150, 550, 163, 61)
+    boton_volver['rectangulo'] = pygame.Rect(150, 500, 163, 61)
+
+    # CARGAR PORTATIL
+    cargar_y_mostrar_imagen(pantalla, 'img/portatil_game.png', VENTANA, (0, 0))
+    # CARGAR MESSI
+    cargar_y_mostrar_imagen(pantalla,'img/messi_concentrado.png',(73,124),(570,580))
 
     return retorno

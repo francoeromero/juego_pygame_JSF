@@ -7,13 +7,15 @@ from Opciones import mostrar_opciones
 from Rankings import mostrar_rankings
 from game_over import mostrar_game_over
 
+
 pygame.init()
 
 datos_juego = {'puntuacion': 0,
                 'vidas': CANTIDAD_VIDAS,
                 'volumen_musica': 100,
                 'acumulador_correctas': 0,
-                'nivel_actual' : 1}
+                'nivel_actual' : 1,
+                'fecha': FECHA_ACTUAL}
 
 lista_ranking_ordenado = quick_sort(cargar_datos_json("puntajes.json"), 'puntuacion')
 #----------------------------------------------------
@@ -38,7 +40,7 @@ ventana_actual = 'menu'
 #----------------------------------------------------
 # CARGAR FONDO ANIMADO
 fotogramas = []
-fotogramas = cargar_fondo_animado('fondo_animado', 20)
+fotogramas = cargar_fondo_animado('fondo_animado', 40)
 
 
 
@@ -57,7 +59,7 @@ while corriendo:
     elif ventana_actual == 'opciones':
         ventana_actual = mostrar_opciones(pantalla,cola_eventos)
     elif ventana_actual == 'rankings':
-        ventana_actual = mostrar_rankings(pantalla,cola_eventos, lista_ranking_ordenado[:10])
+        ventana_actual = mostrar_rankings(pantalla,cola_eventos,quick_sort(actualizar_ranking('puntajes.json'),'puntuacion'))
     elif ventana_actual == 'game_over':
         ventana_actual = mostrar_game_over(pantalla,cola_eventos, datos_juego)
     elif ventana_actual == 'salir':

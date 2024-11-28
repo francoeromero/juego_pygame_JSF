@@ -1,0 +1,50 @@
+[
+    {
+        "nombre": "Carlos",
+        "puntuacion": 200
+    },
+    {
+        "nombre": "Julian",
+        "puntuacion": -15
+    },
+    {
+        "nombre": "Messi",
+        "puntuacion": 40
+    },
+    {
+        "nombre": "Ronaldo",
+        "puntuacion": 0
+    },
+    {
+        "nombre": "Vicky",
+        "puntuacion": 0
+    },
+    {
+        "nombre": "Cristian",
+        "puntuacion": 80
+    },
+    {
+        "nombre": "Juliancito",
+        "puntuacion": 35
+    },
+    {
+        "nombre": "Franco",
+        "puntuacion": 220
+    },
+    {
+        "nombre": "Hernan",
+        "puntuacion": 35
+    },
+    {
+        "nombre": "Yiyo",
+        "puntuacion": 10
+    },
+    {
+        "nombre": "Jana",
+        "puntuacion": 15
+    },
+    {
+        "nombre": "MESSI",
+        "puntuacion": -15
+    }
+]

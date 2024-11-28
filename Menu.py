@@ -2,8 +2,7 @@ import pygame
 from constantes import *
 from preguntas import *
 from funciones import *
-# from Principal import *
-
+from Juego import *
 pygame.init()
 
 fuente_menu = pygame.font.SysFont('courier', 30) 

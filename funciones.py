@@ -1,6 +1,9 @@
 import pygame
 from variables import indice_fotograma, temporizador
 from constantes import *
+import json
+import csv
+
 def mostrar_texto(surface, text, pos, font, color=pygame.Color('black')):
     '''
     SALTO DE LINEA TEXTO
@@ -32,6 +35,16 @@ def cargar_fondo_animado(ruta_base,cantidad_fotogramas)->list:
         fotogramas.append(pygame.image.load(ruta))
     return fotogramas
 
+def reiniciar_datos_juego(datos_juego: dict)-> None:
+    """Reinicia el diccionario del jugador para una nueva partida
+
+    Returns:
+        dict:
+    """
+    datos_juego['puntuacion'] = 0
+    datos_juego['vidas'] = 3
+    datos_juego['acumulador_correctas'] = 0
+    datos_juego['nivel_juego'] = 1
 
 def actualizar_fotograma(pantalla, fotogramas, velocidad_fondo):
     global indice_fotograma, temporizador
@@ -43,8 +56,17 @@ def actualizar_fotograma(pantalla, fotogramas, velocidad_fondo):
         temporizador = 0
     pantalla.blit(fotogramas[indice_fotograma], (0, 0))
     
+def crear_diccionario_boton(ruta_imagen)->dict:
+    """ Crea un diccionario con la superficie y el rectangulo del boton
 
-
+    Args:
+        ruta_imagen (str): path de la imagen
+    """
+    boton = {
+    'superficie': pygame.image.load(ruta_imagen),
+    'rectangulo': pygame.Rect(150, 550, 163, 61)
+    }
+    return boton
 
 def cargar_y_mostrar_imagen(pantalla, ruta_imagen:str, dimensiones:tuple, posicion):
     imagen = pygame.image.load(ruta_imagen)
@@ -65,7 +87,7 @@ def cargar_botones_y_posicionar(imagenes:list,posiciones:list):
         retorno = cartas
     return retorno
 
-def dibujar_corazones_vidas(cantidad_vidas,pantalla):
+def dibujar_corazones_vidas(cantidad_vidas: int,pantalla):
     posiciones_corazones = [(380, 633), (440, 633), (500, 633)]
     ruta_imagen_celeste = 'img/corazon_celeste.png'
     ruta_imagen_gris = 'img/corazon_gris.png'
@@ -76,12 +98,71 @@ def dibujar_corazones_vidas(cantidad_vidas,pantalla):
         else:     
             cargar_y_mostrar_imagen(pantalla,ruta_imagen_gris,dimensiones_corazon,posiciones_corazones[i])
 
-# def verificar_respuesta(datos_juego:dict,pregunta_actual:dict,respuesta:int)->bool:
-#     if pregunta_actual['respuesta correcta'] == respuesta:
-#         datos_juego['puntuacion'] += PUNTUACION_ACIERTO
-#         retorno = True
-#     else:
-#         datos_juego['puntuacion'] -= PUNTUACION_ERROR
-#         datos_juego['vidas'] -= 1
-#         retorno = False
-#     retorno
+def marcar_respuesta_correcta(datos_juego: dict):
+    CLICK_CORRECTO.play()
+    datos_juego['puntuacion'] += 10
+    datos_juego['acumulador_correctas'] += 1
+    if datos_juego['acumulador_correctas'] >= 10:
+        datos_juego['vidas'] += 1
+        
+def marcar_respuesta_incorrecta(datos_juego: dict):
+    CLICK_INCORRECTO.play()
+    datos_juego['puntuacion'] -= 5
+    datos_juego['acumulador_correctas'] = 0
+    datos_juego['vidas'] -= 1
+        
+archivo_json = "puntuaciones.json"
+
+# Función para guardar datos en JSON
+def guardar_datos_en_json(nombre, puntuacion):
+    datos = {"nombre": nombre, "puntuacion": puntuacion}
+    try:
+        with open("puntajes.json", "r") as archivo:
+            puntajes = json.load(archivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        puntajes = []
+
+    puntajes.append(datos)
+    with open("puntajes.json", "w") as archivo:
+        json.dump(puntajes, archivo, indent=4)
+        
+def cargar_preguntas_csv(ruta_archivo):
+    lista_preguntas = []
+    
+    with open(ruta_archivo, mode='r', newline='', encoding='utf-8') as archivo:
+        lector_csv = csv.reader(archivo)
+        for fila in lector_csv:
+            pregunta = fila[0]
+            respuestas = fila[1:5]  # Las respuestas son los 4 elementos siguientes
+            respuesta_correcta = respuestas.index(fila[5]) + 1  # El índice de la respuesta correcta (1, 2, 3 o 4)
+
+            # Crear un diccionario con la estructura requerida
+            pregunta_dict = {
+                "pregunta": pregunta,
+                "respuesta_1": respuestas[0],
+                "respuesta_2": respuestas[1],
+                "respuesta_3": respuestas[2],
+                "respuesta_4": respuestas[3],
+                "respuesta_correcta": respuesta_correcta
+            }
+
+            lista_preguntas.append(pregunta_dict)
+    
+    return lista_preguntas
+
+def cargar_datos_json(ruta_archivo):
+    with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
+        datos = json.load(archivo)
+    return datos
+
+def quick_sort(lista, clave, asc=True):
+    if len(lista) <= 1:
+        return lista
+    else:
+        pivot = lista[0]
+        menores = [item for item in lista[1:] if item[clave] <= pivot[clave]]
+        mayores = [item for item in lista[1:] if item[clave] > pivot[clave]]
+        if asc:
+            return quick_sort(mayores, clave, asc) + [pivot] + quick_sort(menores, clave, asc)
+        else:
+            return quick_sort(menores, clave, asc) + [pivot] + quick_sort(mayores, clave, asc)

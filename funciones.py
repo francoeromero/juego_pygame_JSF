@@ -56,15 +56,14 @@ def actualizar_fotograma(pantalla, fotogramas, velocidad_fondo):
         temporizador = 0
     pantalla.blit(fotogramas[indice_fotograma], (0, 0))
     
-def crear_diccionario_boton(ruta_imagen)->dict:
-    """ Crea un diccionario con la superficie y el rectangulo del boton
+def crear_diccionario_boton(ruta_imagen: str, posicion: tuple[int, int]) -> dict:
 
-    Args:
-        ruta_imagen (str): path de la imagen
-    """
+    superficie = pygame.image.load(ruta_imagen)
+    rectangulo = superficie.get_rect(topleft=posicion)
+    
     boton = {
-    'superficie': pygame.image.load(ruta_imagen),
-    'rectangulo': pygame.Rect(150, 550, 163, 61)
+        'superficie': superficie,
+        'rectangulo': rectangulo
     }
     return boton
 
@@ -166,3 +165,8 @@ def quick_sort(lista, clave, asc=True):
             return quick_sort(mayores, clave, asc) + [pivot] + quick_sort(menores, clave, asc)
         else:
             return quick_sort(menores, clave, asc) + [pivot] + quick_sort(mayores, clave, asc)
+
+def actualizar_ranking(ruta_archivo):
+    lista_ranking = cargar_datos_json(ruta_archivo)
+    quick_sort(lista_ranking, 'puntuacion')
+    return lista_ranking

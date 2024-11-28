@@ -3,8 +3,10 @@ from constantes import *
 from funciones import *
 import json
 
-boton_salir = crear_diccionario_boton('img/boton_salir.png')
-boton_salir_seleccionado = crear_diccionario_boton('img/boton_salir_seleccionado.png')
+boton_salir = crear_diccionario_boton('img/boton_salir_game_over.png',(150, 550))
+boton_salir_seleccionado = crear_diccionario_boton('img/boton_salir_game_over_seleccionado.png',(150, 550))
+boton_cargar = crear_diccionario_boton('img/boton_cargar.png',(900, 550))
+boton_cargar_seleccionado = crear_diccionario_boton('img/boton_cargar_seleccionado.png',(900, 550))
 nombre = ''
 
 def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event], datos_juego:dict)->str:
@@ -24,14 +26,21 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
             if boton_salir['rectangulo'].collidepoint(evento.pos):
                 CLICK_SONIDO.play()
                 boton_salir['superficie'] = boton_salir_seleccionado['superficie']
+                reiniciar_datos_juego(datos_juego)
                 retorno = 'menu'
-                
+            if boton_cargar['rectangulo'].collidepoint(evento.pos):
+                CLICK_SONIDO.play()
+                guardar_datos_en_json(nombre, datos_juego['puntuacion'])
+                reiniciar_datos_juego(datos_juego)
+                    
+                retorno = 'menu'
         #---------
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_RETURN:  # Guarda al presionar enter
                 if nombre.isalpha():
-                    guardar_datos_en_json(nombre, datos_juego['puntuacion']) 
+                    guardar_datos_en_json(nombre, datos_juego['puntuacion'])
                     reiniciar_datos_juego(datos_juego)
+                    
                     retorno = 'menu'
                 else:
                     mensaje_error = "El nombre solo debe contener letras."
@@ -45,7 +54,9 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
     # CARGAR FONDO PANTALLA
     cargar_y_mostrar_imagen(pantalla,'img/fondo_puntuacion.png',VENTANA,(0,0))
     # CARGAR BOTON SALIR
-    cargar_y_mostrar_imagen(pantalla, 'img/boton_salir.png', (163,61), (150, 550))
+    cargar_y_mostrar_imagen(pantalla, 'img/boton_salir_game_over.png', (163,61), (150, 550))
+    # CARGAR BOTON CARGAR
+    cargar_y_mostrar_imagen(pantalla, 'img/boton_cargar.png', (163,61), (900, 550))
     # CARGAR PORTATIL
     cargar_y_mostrar_imagen(pantalla, 'img/portatil.png', VENTANA, (0, 0))
     
@@ -55,7 +66,6 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
     
     #Rectangulo nombre
     input_rect = pygame.Rect(770, 380, 200, 40)
-    # pygame.draw.rect(pantalla, (200, 200, 200), input_rect, 2)
     
     texto_nombre = fuente_game_over.render(nombre, True, (COLOR_NEGRO))
     pantalla.blit(texto_nombre, (input_rect.x + 5, input_rect.y + 5))
@@ -65,12 +75,4 @@ def mostrar_game_over(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Eve
         pantalla.blit(error_texto, (150, 440))
 
                     
-    # ACTUALIZAR BOTON VOLVER SELECCIONADO
-    boton_salir['rectangulo'] = pantalla.blit(boton_salir['superficie'], boton_salir['rectangulo'].topleft)
-    # REINICIAR BOTON VOLVER SELECCIONADO
-    boton_salir['superficie'] = pygame.image.load('img/boton_salir.png')
-    boton_salir['rectangulo'] = pygame.Rect(150, 550, 163, 61)
-    
-    # pygame.display.flip()
-    
     return retorno

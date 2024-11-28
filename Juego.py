@@ -40,6 +40,7 @@ bandera_respuesta = False
 contador_respuestas_correctas = 0
 cronometro = 9
 ultimo_tiempo = pygame.time.get_ticks()
+contador_correctas_constantes = 0 # -----------------------
 
 def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event], datos_juego:dict)->str:
     global indice
@@ -49,7 +50,8 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     global contador_respuestas_correctas
     global cronometro
     global ultimo_tiempo
-    
+    global contador_correctas_constantes # -----------------------
+
     pygame.display.set_caption('JUEGO')
     if bandera_respuesta == True:
         cartas_respuestas = cargar_botones_y_posicionar(imagenes_respuestas,posiciones_botones)
@@ -66,6 +68,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     if cronometro <= 0:
         marcar_respuesta_incorrecta(datos_juego)
         indice += 1
+        contador_correctas_constantes = 0 # -----------------------
         bandera_respuesta = True
         if indice == len(lista_preguntas):
             indice = 0
@@ -88,10 +91,18 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
                 if cartas_respuestas[i]['rectangulo'].collidepoint(evento.pos):
                     CLICK_PELOTAZO.play()
                     cartas_respuestas[i]['superficie'] = pygame.image.load(imagenes_respuestas_seleccionadas[i])
-                    if i + 1 == pregunta_actual['respuesta_correcta']:
+                    respuesta_actual = i + 1
+                    if respuesta_actual == pregunta_actual['respuesta_correcta']:
                         marcar_respuesta_correcta(datos_juego)
                         # CONTAR CORRECTAS
                         contador_respuestas_correctas += 1
+                        contador_correctas_constantes += 1# -----------------------
+
+                        if contador_correctas_constantes == 5: # -----------------------
+                                datos_juego['vidas'] += 1
+                                contador_correctas_constantes = 0
+                                CLICK_GANASTE_VIDA.play()
+
                         if contador_respuestas_correctas >= CANTIDAD_PREGUNTAS_POR_NIVEL:
                             contador_respuestas_correctas = 0
                             if datos_juego['nivel_actual'] <= CANTIDAD_NIVELES:
@@ -101,6 +112,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
 
                     else:
                         marcar_respuesta_incorrecta(datos_juego)
+                        contador_correctas_constantes = 0 # -----------------------
                     indice += 1
                     bandera_respuesta = True
                     if indice == len(lista_preguntas):
@@ -133,7 +145,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     mostrar_texto(pantalla,f'{datos_juego["puntuacion"]}',(830,643),fuente_portatil,COLOR_BLANCO)
     # CRONOMETRO
     mostrar_texto(pantalla,f"00:0{cronometro}",(580, 95), fuente_portatil,  COLOR_BLANCO) 
-    
+
     # DIBUJAR LAS RESPUESTAS
     for i in range(len(cartas_respuestas)):
         pantalla.blit(cartas_respuestas[i]['superficie'],cartas_respuestas[i]['rectangulo'])

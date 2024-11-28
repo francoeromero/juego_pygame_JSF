@@ -35,7 +35,8 @@ CLICK_SONIDO = pygame.mixer.Sound("sonidos/sonido_navegacion.mp3")
 CLICK_PELOTAZO = pygame.mixer.Sound("sonidos/sonido_boton.mp3")
 CLICK_CORRECTO = pygame.mixer.Sound("sonidos/sonido_correcto.mp3")
 CLICK_INCORRECTO = pygame.mixer.Sound("sonidos/sonido_incorrecto.mp3")
-CLICK_GAME_OVER = pygame.mixer.Sound("sonidos/game_over.mp3")
+CLICK_GAME_OVER = pygame.mixer.Sound("sonidos/anda_para_alla_bobo.mp3")
+CLICK_GANASTE_VIDA = pygame.mixer.Sound("sonidos/goool.mp3")
 
 BOTON_JUGAR = 0
 BOTON_CONFIG = 1

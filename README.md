@@ -7,28 +7,37 @@ Proyecto: Pregunta y gool!
 Docente: Mariano Fernandez  
 
 ---
-
+![Portada](./img/readme/readme_portada.jpg)
 **Pregunta y Gool!** es un juego de preguntas y respuestas basado en la popular dinámica de **Preguntados** con una temática futbolista, desarrollado en Python utilizando la biblioteca **Pygame**. El juego incluye características como preguntas aleatorias, comodines, gestión de puntajes y configuración personalizada.
 
 ---
 # Idea Principal del Juego
-
+![Portada](./img/readme/idea_general.png)
 La idea principal del juego es generar una experiencia visual atractiva y dinámica a través de la simulación de **profundidad de campo**, estructurada en **tres planos** visuales claramente diferenciados:
 
 ## 1. Primer Plano (Animado y Fuera de Contexto)
+![Portada](./img/readme/primer_plano.png)
 Este plano se sitúa al fondo de la ventana de Pygame y está compuesto por elementos animados que, aunque no están directamente relacionados con la narrativa del juego, generan una sensación de profundidad y movimiento. Este fondo dinámico aporta riqueza visual y crea una atmósfera inmersiva, destacando la tridimensionalidad de la escena.
 
 ## 2. Segundo Plano (Fijo)
+![Portada](./img/readme/segundo_plano.png)
 En este plano, se representa una computadora portátil con su pantalla abierta. En la pantalla se desarrolla la interfaz principal del juego. Este elemento actúa como un marco intermedio fijo, estableciendo un contraste con el dinamismo del primer plano. Este recurso enfatiza la idea de que el jugador interactúa dentro de un entorno enmarcado, aportando un toque visual único.
 
 ## 3. Tercer Plano (Protagonista y Nivel)
+![Portada](./img/readme/tercer_plano.png)
 Este es el plano más cercano al jugador y representa al protagonista del juego. A medida que el jugador avanza por los niveles, el protagonista cambia, reflejando el progreso en el juego. Sin embargo, el segundo plano (la computadora) y el primer plano (fondo animado) permanecen constantes, reforzando la idea de continuidad en la experiencia visual. El contraste entre el dinamismo del primer plano, la estabilidad del segundo, y la evolución en el tercer plano genera un equilibrio visual que mantiene al jugador inmerso en la experiencia.
 
 ---
 
 ## Objetivo Visual y Narrativo
+![Portada](./img/readme/menu_principal.png)
 El diseño busca unir elementos de **interactividad** y **narrativa visual** en una estructura única. La combinación de planos fijos y dinámicos no solo añade profundidad, sino que también guía la atención del jugador hacia el desarrollo del juego en el tercer plano, mientras los otros planos complementan la experiencia de forma armoniosa.
-
+![Portada](./img/readme/nivel1.png)
+![Portada](./img/readme/nivel2.png)
+![Portada](./img/readme/nivel3.png)
+![Portada](./img/readme/nivel4.png)
+![Portada](./img/readme/nivel5.png)
+![Portada](./img/readme/nivel6.png)
 ---
 ## **Características Principales**
 - **Modo de Juego:**

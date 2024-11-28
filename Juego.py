@@ -45,6 +45,13 @@ ultimo_tiempo = pygame.time.get_ticks()
 contador_correctas_constantes = 0 # -----------------------
 mostrar_messi_feliz = 0
 mostrar_messi_enojado = 0
+
+# COMODINES
+comodin_multiplicar = True  # Comodín de multiplicar disponible
+comodin_pasar = True        # Comodín de pasar disponible
+multiplicar_activado = False  # Estado de activación del comodín multiplicar
+pasar_activado = False       # Estado de activación del comodín pasar
+
 def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event], datos_juego:dict)->str:
     global indice
     global lista_preguntas
@@ -56,7 +63,11 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     global contador_correctas_constantes # -----------------------
     global mostrar_messi_feliz
     global mostrar_messi_enojado
-
+    global comodin_multiplicar   # Comodín de multiplicar disponible
+    global comodin_pasar         # Comodín de pasar disponible
+    global multiplicar_activado # Indica si el comodín multiplicar está activo
+    global pasar_activado    
+    
     pygame.display.set_caption('JUEGO')
     if bandera_respuesta == True:
         cartas_respuestas = cargar_botones_y_posicionar(imagenes_respuestas,posiciones_botones)
@@ -96,16 +107,46 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     for evento in cola_eventos:
         if evento.type == pygame.QUIT:
             retorno = 'salir'
+        
+        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_2 and comodin_multiplicar:
+            comodin_multiplicar = False  # Marcar el comodín como usado
+            multiplicar_activado = True  # Activar el efecto
+            print("Comodín de multiplicar activado.")
+
+        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_4 and comodin_pasar:
+            comodin_pasar = False
+            pasar_activado = True
+            print("Comodín de pasar activado.")
+            
         if evento.type == pygame.MOUSEBUTTONDOWN:
+            if pasar_activado:
+                pasar_activado = False
+                indice += 1
+                bandera_respuesta = True
+                cronometro = 15
+                if indice >= len(lista_preguntas):
+                    indice = 0
+                    retorno = 'game_over'
+                print("Pregunta pasada por comodín.")
+                return retorno
+            
+            
             for i in range(len(cartas_respuestas)):
                 if cartas_respuestas[i]['rectangulo'].collidepoint(evento.pos):
                     CLICK_PELOTAZO.play()
                     cartas_respuestas[i]['superficie'] = pygame.image.load(imagenes_respuestas_seleccionadas[i])
                     respuesta_actual = i + 1
+                    
                     if respuesta_actual == pregunta_actual['respuesta_correcta']:
                         marcar_respuesta_correcta(datos_juego)
                         mostrar_messi_feliz = 30
                         
+                        # Multiplicar el puntaje si el comodín está activo
+                        if multiplicar_activado:
+                            datos_juego['puntuacion'] += 2 * PUNTOS_POR_PREGUNTA
+                            multiplicar_activado = False
+                            print("Puntaje multiplicado por comodín.")
+
                         # CONTAR CORRECTAS
                         contador_respuestas_correctas += 1
                         contador_correctas_constantes += 1
@@ -114,7 +155,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
                                 CLICK_GANASTE_VIDA.play()
                                 if datos_juego['vidas'] < 3:
                                     datos_juego['vidas'] += 1
-                                    # contador_correctas_constantes = 0
+                                    contador_correctas_constantes = 0
 
                         if contador_respuestas_correctas >= CANTIDAD_PREGUNTAS_POR_NIVEL:
                             contador_respuestas_correctas = 0

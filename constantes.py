@@ -54,3 +54,11 @@ OPCION_3 = 2
 OPCION_4 = 3
 CANTIDAD_PREGUNTAS_POR_NIVEL = 10
 CANTIDAD_NIVELES = 6
+
+fuente_comodines = pygame.font.SysFont('arial', 20)
+
+# Teclas numéricas para activar los comodines
+TECLA_COMODINES = {
+    'x2': pygame.K_2,           # Tecla '2' para X2
+    'pasar': pygame.K_4         # Tecla '4' para Pasar
+}

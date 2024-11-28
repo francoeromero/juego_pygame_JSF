@@ -172,3 +172,44 @@ def actualizar_ranking(ruta_archivo):
     lista_ranking = cargar_datos_json(ruta_archivo)
     quick_sort(lista_ranking, 'puntuacion')
     return lista_ranking
+
+
+
+def activar_pasar():
+    return True  # Saltar la pregunta
+
+def mostrar_comodines(pantalla, comodines):
+    # Posición de los comodines en la esquina superior izquierda
+    posicion_comodines = (10, 10)
+
+    # Comodines disponibles
+    texto_comodines = "Comodines: "
+    
+    if comodines['x2']:
+        texto_comodines += "2: X2, "
+
+    if comodines['pasar']:
+        texto_comodines += "4: Pasar"
+
+    if texto_comodines == "Comodines: ":
+        texto_comodines = "No tiene comodines disponibles"
+    # Mostrar los comodines disponibles
+    mostrar_texto(pantalla, texto_comodines, posicion_comodines, fuente_comodines, COLOR_BLANCO)
+
+def gestionar_comodines(cola_eventos, comodines, pregunta_actual, datos_juego):
+    for evento in cola_eventos:
+        if evento.type == pygame.KEYDOWN:
+            print(f"Tecla presionada: {evento.key}")  # Verifica la tecla presionada
+            # Verificar que la tecla presionada sea válida y que el comodín esté disponible
+            for comodin, tecla in TECLA_COMODINES.items():
+                if evento.key == tecla and comodines[comodin]:
+                    comodines[comodin] = False  # Marcar como usado
+                    
+                    if comodin == 'x2':
+                        print("Comodín X2 activado.")
+                    
+                    elif comodin == 'pasar':
+                        return True  # Indica que se salta la pregunta
+
+    return False
+
